@@ -184,51 +184,52 @@ PLUGIN_BUNNY_API_CALL(PluginWizzflux::Api_Play)
 	if(!bunny->IsIdle())
 		return new ApiManager::ApiError(QString("Bunny '%1' is not idle").arg(hRequest.GetArg("to")));
 
-    if(streamFlux(bunny, hRequest.GetArg("name")))
-    	return new ApiManager::ApiOk(QString("Now streaming '%1' on bunny '%2'").arg(hRequest.GetArg("name"), QString(bunny->GetID())));
+  if(streamFlux(bunny, hRequest.GetArg("name")))
+    return new ApiManager::ApiOk(QString("Now streaming '%1' on bunny '%2'").arg(hRequest.GetArg("name"), QString(bunny->GetID())));
+
 	return new ApiManager::ApiError(QString("Can't stream '%1' on bunny '%2'").arg(hRequest.GetArg("name"), QString(bunny->GetID())));
 }
 
 PLUGIN_BUNNY_API_CALL(PluginWizzflux::Api_AddWebcast)
 {
-    Q_UNUSED(account);
+  Q_UNUSED(account);
 
-    QString hTime = hRequest.GetArg("time");
+  QString hTime = hRequest.GetArg("time");
 	if(!bunny->GetPluginSetting(GetName(), "Webcasts", QMap<QString, QVariant>()).toMap().contains(hTime))
-    {
-        Cron::RegisterDaily(this, QTime::fromString(hTime, "hh:mm"), bunny, QVariant::fromValue(hRequest.GetArg("name")));
-	QMap<QString, QVariant> list = bunny->GetPluginSetting(GetName(), "Webcasts", QMap<QString, QVariant>()).toMap();
-        list.insert(hTime, hRequest.GetArg("name"));
-        bunny->SetPluginSetting(GetName(), "Webcasts", list);
-        return new ApiManager::ApiOk(QString("Add webcast at '%1' to bunny '%2'").arg(hRequest.GetArg("time"), QString(bunny->GetID())));
-    }
-    return new ApiManager::ApiError(QString("Webcast at '%1' already exists for bunny '%2'").arg(hRequest.GetArg("time"), QString(bunny->GetID())));
+  {
+      Cron::RegisterDaily(this, QTime::fromString(hTime, "hh:mm"), bunny, QVariant::fromValue(hRequest.GetArg("name")));
+      QMap<QString, QVariant> list = bunny->GetPluginSetting(GetName(), "Webcasts", QMap<QString, QVariant>()).toMap();
+      list.insert(hTime, hRequest.GetArg("name"));
+      bunny->SetPluginSetting(GetName(), "Webcasts", list);
+      return new ApiManager::ApiOk(QString("Add webcast at '%1' to bunny '%2'").arg(hRequest.GetArg("time"), QString(bunny->GetID())));
+  }
+  return new ApiManager::ApiError(QString("Webcast at '%1' already exists for bunny '%2'").arg(hRequest.GetArg("time"), QString(bunny->GetID())));
 }
 
 PLUGIN_BUNNY_API_CALL(PluginWizzflux::Api_RemoveWebcast)
 {
-    Q_UNUSED(account);
+  Q_UNUSED(account);
 
 	QMap<QString, QVariant> list = bunny->GetPluginSetting(GetName(), "Webcasts", QMap<QString, QVariant>()).toMap();
-    QString time = hRequest.GetArg("time");
-    if(list.contains(time))
-    {
-        list.remove(time);
-        bunny->SetPluginSetting(GetName(), "Webcasts", list);
+  QString time = hRequest.GetArg("time");
+  if(list.contains(time))
+  {
+      list.remove(time);
+      bunny->SetPluginSetting(GetName(), "Webcasts", list);
 
-        // Recreate crons
-        OnBunnyDisconnect(bunny);
-        OnBunnyConnect(bunny);
+      // Recreate crons
+      OnBunnyDisconnect(bunny);
+      OnBunnyConnect(bunny);
 
-        return new ApiManager::ApiOk(QString("Remove webcast at '%1' for bunny '%2'").arg(hRequest.GetArg("time"), QString(bunny->GetID())));
-    }
-    return new ApiManager::ApiError(QString("No webcast at '%1' for bunny '%2'").arg(hRequest.GetArg("time"), QString(bunny->GetID())));
+      return new ApiManager::ApiOk(QString("Remove webcast at '%1' for bunny '%2'").arg(hRequest.GetArg("time"), QString(bunny->GetID())));
+  }
+  return new ApiManager::ApiError(QString("No webcast at '%1' for bunny '%2'").arg(hRequest.GetArg("time"), QString(bunny->GetID())));
 }
 
 PLUGIN_BUNNY_API_CALL(PluginWizzflux::Api_ListWebcast)
 {
 	Q_UNUSED(account);
-    Q_UNUSED(hRequest);
+  Q_UNUSED(hRequest);
 
 	QMap<QString, QVariant> list = bunny->GetPluginSetting(GetName(), "Webcasts", QMap<QString, QVariant>()).toMap();
 
@@ -238,8 +239,8 @@ PLUGIN_BUNNY_API_CALL(PluginWizzflux::Api_ListWebcast)
 PLUGIN_BUNNY_API_CALL(PluginWizzflux::Api_ListFlux)
 {
 	Q_UNUSED(account);
-    Q_UNUSED(bunny);
-    Q_UNUSED(hRequest);
+  Q_UNUSED(bunny);
+  Q_UNUSED(hRequest);
 
 	return new ApiManager::ApiList(GetSettings("ListFlux", QStringList()).toStringList());
 }
@@ -247,7 +248,7 @@ PLUGIN_BUNNY_API_CALL(PluginWizzflux::Api_ListFlux)
 PLUGIN_API_CALL(PluginWizzflux::Api_GetFlux)
 {
 	Q_UNUSED(account);
-    Q_UNUSED(hRequest);
+  Q_UNUSED(hRequest);
 
 	return new ApiManager::ApiList(GetSettings("ListFlux", QStringList()).toStringList());
 }
