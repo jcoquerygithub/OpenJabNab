@@ -28,7 +28,7 @@ bool PluginLocate::HttpRequestHandle(HTTPRequest & request)
 		QString locateString;
 		locateString += QString("ping %1\n").arg(pingServer);
 		locateString += QString("broad %1\n").arg(broadServer);
-		locateString += QString("xmpp_domain %1\n").arg(xmppServer);
+		locateString += QString("xmpp_domain %1:%2\n").arg(xmppServer, xmppPort);
 		request.reply = locateString.toAscii();
 
 		bunny->SetGlobalSetting("LastLocate", QDateTime::currentDateTime());
